@@ -68,45 +68,37 @@
     <!-- Marker for testing -->
     <a-marker type="pattern" url="assets/marker.patt">
 
-    <!-- FRONT text -->
-    <a-entity id="frontText" position="0 0.05 0.05" rotation="-45 0 0" visible="true">
-      <a-plane
-        id="frontPlane"
-        width="2"
-        height="0.5"
-        shader="rainbow-shader"
-        transparent="true">
-      </a-plane>
-      <a-text
-        value="Design is a reflection of culture."
-        align="center"
-        color="#FFFFFF"
-        width="2.2"
-        position="0 0 0.01"
-        font="https://cdn.aframe.io/fonts/ComicSansMS.typeface.json">
-      </a-text>
-    </a-entity>
-    
-    <!-- BACK text -->
-    <a-entity id="backText" position="0 0.05 -0.05" rotation="-45 180 0" visible="false">
-      <a-plane
-        id="backPlane"
-        width="2"
-        height="0.5"
-        shader="rainbow-shader"
-        transparent="true">
-      </a-plane>
-      <a-text
-        value="Culture is a reflection of design."
-        align="center"
-        color="#FFFFFF"
-        width="2.2"
-        position="0 0 0.01"
-        font="https://cdn.aframe.io/fonts/ComicSansMS.typeface.json">
-      </a-text>
-    </a-entity>
+<!-- FRONT side -->
+<a-entity id="frontText" position="0 0.05 0.05" rotation="-45 0 0" visible="true">
+  <!-- Rainbow background -->
+  <a-plane width="2" height="0.5" material="shader: rainbow-shader; transparent: true"></a-plane>
 
+  <!-- White Comic Sans text -->
+  <a-text
+    value="Design is a reflection of culture."
+    align="center"
+    width="2.2"
+    color="#FFFFFF"
+    position="0 0 0.01"
+    font="https://cdn.aframe.io/fonts/ComicSansMS.typeface.json">
+  </a-text>
+</a-entity>
 
+<!-- BACK side -->
+<a-entity id="backText" position="0 0.05 -0.05" rotation="-45 180 0" visible="false">
+  <!-- Rainbow background -->
+  <a-plane width="2" height="0.5" material="shader: rainbow-shader; transparent: true"></a-plane>
+
+  <!-- White Comic Sans text -->
+  <a-text
+    value="Culture is a reflection of design."
+    align="center"
+    width="2.2"
+    color="#FFFFFF"
+    position="0 0 0.01"
+    font="https://cdn.aframe.io/fonts/ComicSansMS.typeface.json">
+  </a-text>
+</a-entity>
 
     <a-entity camera></a-entity>
   </a-scene>
