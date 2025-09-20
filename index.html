@@ -1,64 +1,445 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>AR.js Hiro Debug Test</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="Immersive augmented reality experiments and marker resources."
+    />
+    <title>Kyle Vahamäki · Augmented Reality Experiments</title>
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+      crossorigin
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark light;
+        --bg: #070910;
+        --bg-alt: #111424;
+        --text: #f6f7fb;
+        --muted: #c8ccdf;
+        --accent: #56d0ff;
+        --accent-strong: #a86bff;
+        --radius: clamp(0.8rem, 1.2vw, 1.25rem);
+        --shadow: 0 30px 60px rgba(10, 20, 60, 0.35);
+      }
 
-  <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-  <!-- AR.js (A-Frame build) -->
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+      * {
+        box-sizing: border-box;
+      }
 
-  <style>
-    html, body { width:100%; height:100%; margin:0; padding:0; overflow:hidden; background:#111; }
-    a-scene { width:100%; height:100%; }
-    #hud {
-      position:fixed; left:0; top:0; right:0;
-      padding:8px 10px; font:12px/1.4 system-ui, sans-serif;
-      color:#fff; background:rgba(0,0,0,.35); z-index:9999;
-      pointer-events:none; white-space:pre-line;
-    }
-  </style>
-</head>
-<body>
-  <div id="hud">Booting…</div>
+      body {
+        margin: 0;
+        font-family: "Outfit", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: radial-gradient(circle at 20% 20%, rgba(86, 208, 255, 0.08),
+            transparent 55%),
+          radial-gradient(circle at 80% 15%, rgba(168, 107, 255, 0.12), transparent 60%),
+          var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.6;
+      }
 
-  <!-- Fullscreen scene; rear camera; debug UI ON so we see AR.js panel -->
-  <a-scene
-    renderer="antialias:true; alpha:true; logarithmicDepthBuffer:true"
-    embedded
-    vr-mode-ui="enabled:false"
-    device-orientation-permission-ui="enabled:true"
-    arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: true; trackingMethod: best;">
-    
-    <!-- Built-in Hiro marker -->
-    <a-marker preset="hiro">
-      <a-box position="0 0.5 0" rotation="0 45 0" depth="0.5" height="0.5" width="0.5" color="#4CC3D9"></a-box>
-      <a-entity position="0 1.0 0" text="value: Hello AR (Hiro); align:center; width:2; color:#FFFFFF"></a-entity>
-      <!-- Light so text/box are clearly visible -->
-      <a-entity light="type:directional; intensity:1" position="0 2 1"></a-entity>
-      <a-entity light="type:ambient; intensity:0.6"></a-entity>
-    </a-marker>
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(18px);
+        background: linear-gradient(180deg, rgba(7, 9, 16, 0.88), rgba(7, 9, 16, 0.35));
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
 
-    <a-entity camera></a-entity>
-  </a-scene>
+      .nav-shell {
+        margin: 0 auto;
+        padding: clamp(0.75rem, 1vw, 1.25rem) clamp(1.4rem, 4vw, 5rem);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+      }
 
-  <script>
-    const hud = document.getElementById('hud');
+      .brand {
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: clamp(1rem, 2vw, 1.2rem);
+      }
 
-    function log(msg){ hud.textContent = msg + '\n' + hud.textContent; }
+      nav ul {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        gap: clamp(1rem, 2vw, 2.5rem);
+      }
 
-    // AR.js lifecycle hooks
-    window.addEventListener('arjs-video-loaded', (e) => {
-      log('✅ arjs-video-loaded: camera stream acquired');
-      const v = document.querySelector('video');
-      if (v) log(`video ${v.videoWidth}×${v.videoHeight}`);
-    });
+      nav a {
+        color: inherit;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+        position: relative;
+      }
 
-    window.addEventListener('arReady', (e) => {
-      log('✅ arReady: AR.js initialized');
-    });
+      nav a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -0.4rem;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.3s ease;
+      }
 
-    window.addEventListener('arError', (e) => {
-      log('❌ arError: ' + (e && e.detail ? e.detail :
+      nav a:focus-visible,
+      nav a:hover {
+        color: var(--accent);
+      }
+
+      nav a:focus-visible::after,
+      nav a:hover::after {
+        transform: scaleX(1);
+      }
+
+      main {
+        width: min(1100px, 94vw);
+        margin: 0 auto;
+        padding: clamp(2.5rem, 6vw, 6rem) 0 6rem;
+        flex: 1;
+        display: grid;
+        gap: clamp(3rem, 6vw, 6rem);
+      }
+
+      section {
+        background: rgba(8, 13, 30, 0.65);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: var(--radius);
+        padding: clamp(1.8rem, 3vw, 2.75rem);
+        box-shadow: var(--shadow);
+      }
+
+      .hero {
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        letter-spacing: -0.03em;
+      }
+
+      .hero p {
+        margin: 0;
+        max-width: 58ch;
+        color: var(--muted);
+        font-size: clamp(1.05rem, 2vw, 1.25rem);
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border-radius: 999px;
+        padding: 0.75rem 1.6rem;
+        font-weight: 600;
+        color: var(--bg);
+        background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+        text-decoration: none;
+        box-shadow: 0 15px 30px rgba(86, 208, 255, 0.28);
+      }
+
+      .btn.secondary {
+        background: transparent;
+        color: var(--text);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+      }
+
+      .grid {
+        display: grid;
+        gap: clamp(1.4rem, 3vw, 2.5rem);
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .card {
+        padding: clamp(1.4rem, 2.5vw, 2rem);
+        border-radius: calc(var(--radius) * 0.75);
+        background: rgba(12, 18, 36, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      .card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.98rem;
+      }
+
+      .steps {
+        display: grid;
+        gap: 1.25rem;
+      }
+
+      .step {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .step strong {
+        font-size: 1.05rem;
+      }
+
+      .resources-list {
+        display: grid;
+        gap: 0.75rem;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .resources-list a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .resources-list a:hover,
+      .resources-list a:focus-visible {
+        text-decoration: underline;
+      }
+
+      footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(7, 9, 16, 0.92);
+      }
+
+      footer .inner {
+        margin: 0 auto;
+        padding: 1.5rem clamp(1.4rem, 4vw, 5rem);
+        width: min(1100px, 94vw);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.5rem;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.92rem;
+        color: rgba(255, 255, 255, 0.72);
+      }
+
+      footer a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      footer a:hover,
+      footer a:focus-visible {
+        color: var(--accent);
+      }
+
+      @media (max-width: 720px) {
+        nav ul {
+          flex-wrap: wrap;
+          justify-content: flex-end;
+        }
+
+        section {
+          padding: clamp(1.4rem, 6vw, 2.5rem);
+        }
+
+        .nav-shell {
+          padding-inline: clamp(1rem, 5vw, 2rem);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="nav-shell">
+        <div class="brand">Kyle Vahamäki</div>
+        <nav aria-label="Primary navigation">
+          <ul>
+            <li><a href="#experiments">Experiments</a></li>
+            <li><a href="#workflow">Workflow</a></li>
+            <li><a href="#resources">Resources</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="hero" id="top">
+        <h1>Exploring accessible augmented reality on the web</h1>
+        <p>
+          Hi! I’m Kyle Vahamäki. This space documents my ongoing experiments in
+          lightweight, browser-based augmented reality. I focus on demos that
+          work on everyday devices while staying easy to remix and extend.
+        </p>
+        <div class="cta-row">
+          <a class="btn" href="#experiments">View current builds</a>
+          <a class="btn secondary" href="#contact">Let’s collaborate</a>
+        </div>
+      </section>
+
+      <section id="experiments" aria-labelledby="experiments-title">
+        <h2 id="experiments-title">Latest experiments</h2>
+        <p>
+          Each concept emphasizes quick setup, smooth performance, and
+          repeatable workflows. Dive in, fork the code, and tailor it to your
+          own prototypes.
+        </p>
+        <div class="grid">
+          <article class="card">
+            <h3>Marker-tracked sculptures</h3>
+            <p>
+              Responsive lighting, animated meshes, and instruction overlays
+              anchored to Hiro-style markers for rapid prototyping in education
+              and museums.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Location-aware tours</h3>
+            <p>
+              Device GPS paired with WebXR cues to guide visitors through an
+              outdoor trail with contextual audio and spatial annotations.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Hands-free dashboards</h3>
+            <p>
+              Multi-panel HUD designed for technicians using lightweight
+              headsets. Focuses on clarity, large hit targets, and responsive
+              gestures.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="workflow" aria-labelledby="workflow-title">
+        <h2 id="workflow-title">Workflow highlights</h2>
+        <div class="steps">
+          <div class="step">
+            <strong>1. Concept sketching</strong>
+            <p>
+              Define the interaction goals and identify how AR elevates the
+              narrative. I often start with pen-and-paper flows and storyboards.
+            </p>
+          </div>
+          <div class="step">
+            <strong>2. Prototype quickly</strong>
+            <p>
+              Use Three.js, A-Frame, or native WebXR APIs to test the concept on
+              real devices early. Accessibility and performance checks happen
+              from the first build.
+            </p>
+          </div>
+          <div class="step">
+            <strong>3. Iterate with users</strong>
+            <p>
+              Observe how people explore the space. Short feedback loops ensure
+              the experience remains intuitive and inclusive before scaling up.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="resources" aria-labelledby="resources-title">
+        <h2 id="resources-title">Resources &amp; downloads</h2>
+        <p>
+          Tools I rely on for rapid iteration, plus reference markers you can
+          print and test right away.
+        </p>
+        <ul class="resources-list">
+          <li>
+            <a href="https://github.com/AR-js-org/AR.js" target="_blank" rel="noreferrer"
+              >AR.js on GitHub</a
+            >
+            — fast marker-based AR for the web.
+          </li>
+          <li>
+            <a href="https://aframe.io" target="_blank" rel="noreferrer">A-Frame</a>
+            — entity-component framework that makes WebXR approachable.
+          </li>
+          <li>
+            <a
+              href="https://raw.githubusercontent.com/AR-js-org/AR.js/master/three.js/data/images/HIRO.jpg"
+              target="_blank"
+              rel="noreferrer"
+              >Printable Hiro marker</a
+            >
+            — the quick-start pattern I use for marker demos.
+          </li>
+          <li>
+            <a href="mailto:hello@kylevahamaki.com">hello@kylevahamaki.com</a>
+            — email me to request bespoke builds or consulting.
+          </li>
+        </ul>
+      </section>
+
+      <section id="contact" aria-labelledby="contact-title">
+        <h2 id="contact-title">Let’s build something together</h2>
+        <p>
+          I’m available for collaborations, prototyping sprints, and workshops
+          on building meaningful AR experiences. Share your idea and we’ll
+          explore how immersive storytelling can elevate it.
+        </p>
+        <div class="cta-row">
+          <a class="btn" href="mailto:hello@kylevahamaki.com">Start a project</a>
+          <a class="btn secondary" href="#top">Back to top</a>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="inner">
+        <span id="copyright"></span>
+        <a href="https://github.com/kylevahamaki" target="_blank" rel="noreferrer"
+          >GitHub</a
+        >
+      </div>
+    </footer>
+    <script>
+      const year = new Date().getFullYear();
+      const copyrightEl = document.getElementById("copyright");
+      copyrightEl.textContent = `© ${year} Kyle Vahamäki. All rights reserved.`;
+
+      const navLinks = document.querySelectorAll("nav a[href^='#']");
+      navLinks.forEach((link) => {
+        link.addEventListener("click", (event) => {
+          const targetId = link.getAttribute("href").slice(1);
+          const target = document.getElementById(targetId);
+          if (!target) return;
+          event.preventDefault();
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+    </script>
+  </body>
+</html>
