@@ -1,33 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>AR.js Hiro Test</title>
+  <title>AR.js Hiro Debug Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-
-  <!-- AR.js -->
+  <!-- AR.js (A-Frame build) -->
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 
   <style>
-    body { margin:0; overflow:hidden; }
+    html, body { width:100%; height:100%; margin:0; padding:0; overflow:hidden; background:#111; }
+    a-scene { width:100%; height:100%; }
+    #hud {
+      position:fixed; left:0; top:0; right:0;
+      padding:8px 10px; font:12px/1.4 system-ui, sans-serif;
+      color:#fff; background:rgba(0,0,0,.35); z-index:9999;
+      pointer-events:none; white-space:pre-line;
+    }
   </style>
 </head>
 <body>
-  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-    <!-- Use the built-in Hiro marker -->
+  <div id="hud">Booting…</div>
+
+  <!-- Fullscreen scene; rear camera; debug UI ON so we see AR.js panel -->
+  <a-scene
+    renderer="antialias:true; alpha:true; logarithmicDepthBuffer:true"
+    embedded
+    vr-mode-ui="enabled:false"
+    device-orientation-permission-ui="enabled:true"
+    arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: true; trackingMethod: best;">
+    
+    <!-- Built-in Hiro marker -->
     <a-marker preset="hiro">
-      <!-- Simple test box -->
-      <a-box position="0 0.5 0" rotation="0 45 0" color="#4CC3D9"></a-box>
-      <!-- Simple text above the box -->
-      <a-entity position="0 1 0"
-                text="value: Hello AR; align:center; width: 2; color: #FFFFFF">
-      </a-entity>
+      <a-box position="0 0.5 0" rotation="0 45 0" depth="0.5" height="0.5" width="0.5" color="#4CC3D9"></a-box>
+      <a-entity position="0 1.0 0" text="value: Hello AR (Hiro); align:center; width:2; color:#FFFFFF"></a-entity>
+      <!-- Light so text/box are clearly visible -->
+      <a-entity light="type:directional; intensity:1" position="0 2 1"></a-entity>
+      <a-entity light="type:ambient; intensity:0.6"></a-entity>
     </a-marker>
 
     <a-entity camera></a-entity>
   </a-scene>
-</body>
-</html>
+
+  <script>
+    const hud = document.getElementById('hud');
+
+    function log(msg){ hud.textContent = msg + '\n' + hud.textContent; }
+
+    // AR.js lifecycle hooks
+    window.addEventListener('arjs-video-loaded', (e) => {
+      log('✅ arjs-video-loaded: camera stream acquired');
+      const v = document.querySelector('video');
+      if (v) log(`video ${v.videoWidth}×${v.videoHeight}`);
+    });
+
+    window.addEventListener('arReady', (e) => {
+      log('✅ arReady: AR.js initialized');
+    });
+
+    window.addEventListener('arError', (e) => {
+      log('❌ arError: ' + (e && e.detail ? e.detail :
