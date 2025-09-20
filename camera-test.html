@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Camera Only Test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <style>
+    html,body { margin:0; padding:0; background:#111; color:#eee; font:14px system-ui,-apple-system,Segoe UI,Roboto,Arial; }
+    #wrap { max-width: 900px; margin: 0 auto; padding: 12px; }
+    #video { width: 100%; background:#000; }
+    #log { white-space: pre-wrap; background:#1b1b1b; padding:10px; border-radius:8px; }
+    button { padding:8px 12px; border:0; border-radius:8px; background:#2c77ff; color:#fff; margin-right:8px; }
+    select { padding:6px; border-radius:6px; border:1px solid #444; background:#222; color:#fff; }
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <h1>Camera Only Test</h1>
+    <p>This page uses <code>getUserMedia</code> directly. If you don’t see video, it’s a permissions or HTTPS issue.</p>
+    <div style="margin:10px 0;">
+      <button id="rearBtn">Use rear (environment)</button>
+      <button id="frontBtn">Use front (user)</button>
+      <select id="deviceSelect"></select>
+      <button id="deviceBtn">Use selected device</button>
+    </div>
+    <video id="video" autoplay playsinline muted></video>
+    <h3>Status & Errors</h3>
+    <div id="log">Booting…</div>
+  </div>
+
+  <script>
+    const v = document.getElementById('video');
+    const logEl = document.getElementById('log');
+    const deviceSelect = document.getElementById('deviceSelect');
+    let currentStream = null;
+
+    function log(msg){ logEl.textContent = msg + "\n" + logEl.textContent; }
+
+    async function stopStream(){
+      if (currentStream){
+        currentStream.getTracks().forEach(t => t.stop());
+        currentStream = null;
+      }
+    }
+
+    async function listDevices(){
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        deviceSelect.innerHTML = '';
+        devices
+          .filter(d => d.kind === 'videoinput')
+          .forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d.deviceId;
+            opt.textContent = d.label || `Camera ${deviceSelect.length+1}`;
+            deviceSelect.appendChild(opt);
+          });
+        log(`Found ${deviceSelect.length} video device(s).`);
+      } catch (e) {
+        log('enumerateDevices error: ' + e.message);
+      }
+    }
+
+    async function start(constraints){
+      try {
+        await stopStream();
+        log('Requesting camera with constraints: ' + JSON.stringify(constraints));
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        currentStream = stream;
+        v.srcObject = stream;
+        await v.play();
+        log(`✅ Video playing ${v.videoWidth}×${v.videoHeight}`);
+        await listDevices();
+      } catch (e) {
+        log('❌ getUserMedia error: ' + e.name + ' - ' + e.message);
+        if (e.name === 'NotAllowedError') {
+          log('Hint: Check Chrome → lock icon → Site settings → Camera → Allow.');
+        }
+        if (e.name === 'NotFoundError') {
+          log('Hint: No matching camera. Try the other button
