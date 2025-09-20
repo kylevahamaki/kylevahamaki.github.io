@@ -11,38 +11,6 @@
   <!-- AR.js for A-Frame -->
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
 
-  <script src="https://unpkg.com/aframe-fonts@1.0.0/dist/aframe-fonts.min.js"></script>
-
-  <script>
-  AFRAME.registerShader('rainbow-shader', {
-    schema: {
-      time: {type: 'time', is: 'uniform'}
-    },
-    vertexShader: `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform float time;
-      varying vec2 vUv;
-
-      void main() {
-        float speed = 0.5;
-        vec3 color = vec3(
-          0.5 + 0.5 * sin(time * speed + vUv.x * 10.0),
-          0.5 + 0.5 * sin(time * speed + vUv.x * 10.0 + 2.094),
-          0.5 + 0.5 * sin(time * speed + vUv.x * 10.0 + 4.188)
-        );
-        gl_FragColor = vec4(color, 1.0);
-      }
-    `
-  });
-</script>
-
-
   <style>
     html, body {
       margin: 0;
@@ -67,38 +35,25 @@
   >
     <!-- Marker for testing -->
     <a-marker type="pattern" url="assets/marker.patt">
+  <!-- Front text -->
+  <a-entity
+    id="frontText"
+    position="0 0.05 0.05"
+    rotation="-45 0 0"
+    visible="true"
+    text="value: Design is a reflection of culture.; align: center; width: 2; color: #FFFFFF">
+  </a-entity>
 
-<!-- FRONT side -->
-<a-entity id="frontText" position="0 0.05 0.05" rotation="-45 0 0" visible="true">
-  <!-- Rainbow background -->
-  <a-plane width="2" height="0.5" material="shader: rainbow-shader; transparent: true"></a-plane>
+  <!-- Back text -->
+  <a-entity
+    id="backText"
+    position="0 0.05 -0.05"
+    rotation="-45 180 0"
+    visible="false"
+    text="value: Culture is a reflection of design.; align: center; width: 2; color: #FFFFFF">
+  </a-entity>
+</a-marker>
 
-  <!-- White Comic Sans text -->
-  <a-text
-    value="Design is a reflection of culture."
-    align="center"
-    width="2.2"
-    color="#FFFFFF"
-    position="0 0 0.01"
-    font="https://cdn.aframe.io/fonts/ComicSansMS.typeface.json">
-  </a-text>
-</a-entity>
-
-<!-- BACK side -->
-<a-entity id="backText" position="0 0.05 -0.05" rotation="-45 180 0" visible="false">
-  <!-- Rainbow background -->
-  <a-plane width="2" height="0.5" material="shader: rainbow-shader; transparent: true"></a-plane>
-
-  <!-- White Comic Sans text -->
-  <a-text
-    value="Culture is a reflection of design."
-    align="center"
-    width="2.2"
-    color="#FFFFFF"
-    position="0 0 0.01"
-    font="https://cdn.aframe.io/fonts/ComicSansMS.typeface.json">
-  </a-text>
-</a-entity>
 
     <a-entity camera></a-entity>
   </a-scene>
