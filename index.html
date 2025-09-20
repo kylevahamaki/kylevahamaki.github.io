@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AR.js Fixed Demo</title>
+  <title>AR.js Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
   <!-- A-Frame Core -->
@@ -34,9 +34,9 @@
     arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
   >
     <!-- Marker for testing -->
-    <a-marker preset="hiro">
-      <a-box position="0 0.5 0" rotation="0 45 0" color="#4CC3D9"></a-box>
-      <a-text value="Hello AR!" position="0 1 0" align="center"></a-text>
+    <a-marker type="pattern" url="assets/marker.patt">
+      <a-box position="0 0.5 0" rotation="0 0 0" color="#4CC3D9"></a-box>
+      <a-text value="Design is a reflection of culture." position="0 1 0" align="center"></a-text>
     </a-marker>
 
     <a-entity camera></a-entity>
