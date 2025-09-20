@@ -34,53 +34,50 @@
     arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
   >
     <a-marker type="pattern" url="assets/marker.patt">
+   
+      
+      <!-- FRONT text with subtle outline -->
+    <a-entity id="frontText" position="0 0.05 0.05" rotation="-45 0 0" visible="true">
+      <!-- Stroke (black, only slightly larger and slightly behind) -->
+      <a-text 
+        value="Design is a reflection of culture."
+        align="center"
+        width="2.02"           <!-- Only slightly bigger -->
+        color="#000000"
+        position="0 0 -0.002"> <!-- Tiny Z offset -->
+      </a-text>
+    
+      <!-- Foreground (white) -->
+      <a-text 
+        value="Design is a reflection of culture."
+        align="center"
+        width="2.00"
+        color="#FFFFFF"
+        position="0 0 0">
+      </a-text>
+    </a-entity>
+    
+    <!-- BACK text with subtle outline -->
+    <a-entity id="backText" position="0 0.05 -0.05" rotation="-45 180 0" visible="false">
+      <!-- Stroke (black, slightly larger and slightly behind) -->
+      <a-text 
+        value="Culture is a reflection of design."
+        align="center"
+        width="2.02"
+        color="#000000"
+        position="0 0 -0.002">
+      </a-text>
+    
+      <!-- Foreground (white) -->
+      <a-text 
+        value="Culture is a reflection of design."
+        align="center"
+        width="2.00"
+        color="#FFFFFF"
+        position="0 0 0">
+      </a-text>
+    </a-entity>
 
-      <!-- FRONT text with stroke -->
-      <a-entity id="frontText" position="0 0.05 0.05" rotation="-45 0 0" visible="true">
-        <!-- Stroke (black, slightly larger, slightly behind) -->
-        <a-text 
-          value="Design is a reflection of culture."
-          align="center"
-          width="2.1"
-          color="#000000"
-          position="0 0 -0.001">
-        </a-text>
-
-        <!-- Foreground (white, slightly smaller, slightly in front) -->
-        <a-text 
-          value="Design is a reflection of culture."
-          align="center"
-          width="2.0"
-          color="#FFFFFF"
-          position="0 0 0.001">
-        </a-text>
-      </a-entity>
-
-      <!-- BACK text with stroke -->
-      <a-entity id="backText" position="0 0.05 -0.05" rotation="-45 180 0" visible="false">
-        <!-- Stroke (black, slightly larger, slightly behind) -->
-        <a-text 
-          value="Culture is a reflection of design."
-          align="center"
-          width="2.1"
-          color="#000000"
-          position="0 0 -0.001">
-        </a-text>
-
-        <!-- Foreground (white, slightly smaller, slightly in front) -->
-        <a-text 
-          value="Culture is a reflection of design."
-          align="center"
-          width="2.0"
-          color="#FFFFFF"
-          position="0 0 0.001">
-        </a-text>
-      </a-entity>
-
-    </a-marker>
-
-    <a-entity camera></a-entity>
-  </a-scene>
 
   <!-- Debug/Logging Handler -->
   <script>
