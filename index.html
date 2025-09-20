@@ -33,27 +33,51 @@
     renderer="antialias: true; alpha: true; precision: mediump;"
     arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
   >
-    <!-- Marker for testing -->
     <a-marker type="pattern" url="assets/marker.patt">
-  <!-- Front text -->
-  <a-entity
-    id="frontText"
-    position="0 0.05 0.05"
-    rotation="-45 0 0"
-    visible="true"
-    text="value: Design is a reflection of culture.; align: center; width: 2; color: #FFFFFF">
-  </a-entity>
 
-  <!-- Back text -->
-  <a-entity
-    id="backText"
-    position="0 0.05 -0.05"
-    rotation="-45 180 0"
-    visible="false"
-    text="value: Culture is a reflection of design.; align: center; width: 2; color: #FFFFFF">
-  </a-entity>
-</a-marker>
+      <!-- FRONT text with stroke -->
+      <a-entity id="frontText" position="0 0.05 0.05" rotation="-45 0 0" visible="true">
+        <!-- Stroke (black, slightly larger, slightly behind) -->
+        <a-text 
+          value="Design is a reflection of culture."
+          align="center"
+          width="2.1"
+          color="#000000"
+          position="0 0 -0.001">
+        </a-text>
 
+        <!-- Foreground (white, slightly smaller, slightly in front) -->
+        <a-text 
+          value="Design is a reflection of culture."
+          align="center"
+          width="2.0"
+          color="#FFFFFF"
+          position="0 0 0.001">
+        </a-text>
+      </a-entity>
+
+      <!-- BACK text with stroke -->
+      <a-entity id="backText" position="0 0.05 -0.05" rotation="-45 180 0" visible="false">
+        <!-- Stroke (black, slightly larger, slightly behind) -->
+        <a-text 
+          value="Culture is a reflection of design."
+          align="center"
+          width="2.1"
+          color="#000000"
+          position="0 0 -0.001">
+        </a-text>
+
+        <!-- Foreground (white, slightly smaller, slightly in front) -->
+        <a-text 
+          value="Culture is a reflection of design."
+          align="center"
+          width="2.0"
+          color="#FFFFFF"
+          position="0 0 0.001">
+        </a-text>
+      </a-entity>
+
+    </a-marker>
 
     <a-entity camera></a-entity>
   </a-scene>
@@ -64,41 +88,42 @@
       console.error('AR.js error detected:', event.detail);
       alert('AR.js encountered an error. Check console for details.');
     });
+
     AFRAME.registerComponent('text-toggle', {
-    tick: function () {
-      const marker = document.querySelector('a-marker');
-      const camera = document.querySelector('a-entity[camera]');
-      const frontText = document.querySelector('#frontText');
-      const backText = document.querySelector('#backText');
+      tick: function () {
+        const marker = document.querySelector('a-marker');
+        const camera = document.querySelector('a-entity[camera]');
+        const frontText = document.querySelector('#frontText');
+        const backText = document.querySelector('#backText');
 
-      if (!marker.object3D.visible) return;
+        if (!marker.object3D.visible) return;
 
-      // Vector math to determine which side of the marker the camera is on
-      const markerWorldPos = new THREE.Vector3();
-      const cameraWorldPos = new THREE.Vector3();
-      marker.object3D.getWorldPosition(markerWorldPos);
-      camera.object3D.getWorldPosition(cameraWorldPos);
+        // Vector math to determine which side of the marker the camera is on
+        const markerWorldPos = new THREE.Vector3();
+        const cameraWorldPos = new THREE.Vector3();
+        marker.object3D.getWorldPosition(markerWorldPos);
+        camera.object3D.getWorldPosition(cameraWorldPos);
 
-      const markerForward = new THREE.Vector3(0, 0, 1)
-        .applyQuaternion(marker.object3D.quaternion)
-        .normalize();
+        const markerForward = new THREE.Vector3(0, 0, 1)
+          .applyQuaternion(marker.object3D.quaternion)
+          .normalize();
 
-      const toCamera = cameraWorldPos.clone().sub(markerWorldPos).normalize();
-      const dot = markerForward.dot(toCamera);
+        const toCamera = cameraWorldPos.clone().sub(markerWorldPos).normalize();
+        const dot = markerForward.dot(toCamera);
 
-      // If the camera is in front of the marker
-      if (dot > 0) {
-        frontText.setAttribute('visible', true);
-        backText.setAttribute('visible', false);
-      } else {
-        frontText.setAttribute('visible', false);
-        backText.setAttribute('visible', true);
+        // Toggle visibility depending on which side of the marker is facing the camera
+        if (dot > 0) {
+          frontText.setAttribute('visible', true);
+          backText.setAttribute('visible', false);
+        } else {
+          frontText.setAttribute('visible', false);
+          backText.setAttribute('visible', true);
+        }
       }
-    }
-  });
+    });
 
-  // Attach the component to the marker
-  document.querySelector('a-marker').setAttribute('text-toggle', '');
+    // Attach the component to the marker
+    document.querySelector('a-marker').setAttribute('text-toggle', '');
   </script>
 </body>
 </html>
