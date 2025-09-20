@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>AR Marker Front/Back Text</title>
+
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+
+  <!-- AR.js A-Frame build (marker mode) -->
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+  <style>
+    body { margin:0; overflow:hidden; }
+  </style>
+</head>
+<body>
+  <!-- arjs configuration: webcam source; debugUI off -->
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+    <!-- Replace url with your generated pattern file path -->
+    <a-marker type="pattern" url="assets/marker.patt">
+      <!-- FRONT text: slightly in front of the marker plane -->
+      <a-entity
+        id="frontText"
+        position="0 0.05 0.03"
+        rotation="0 0 0"
+        scale="1 1 1"
+        text="value: FRONT SIDE\nLine 2; align:center; baseline:center; width: 1.2; wrapCount: 30; color: #ffffff">
+      </a-entity>
+
+      <!-- BACK text: placed behind and rotated 180° around Y so it faces outward when you go behind -->
+      <a-entity
+        id="backText"
+        position="0 0.05 -0.03"
+        rotation="0 180 0"
+        scale="1 1 1"
+        text="value: BACK SIDE\nLine 2; align:center; baseline:center; width: 1.2; wrapCount: 30; color: #ffffff">
+      </a-entity>
+
+      <!-- optional invisible plane for debugging / scaling -->
+      <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" material="opacity:0.0"></a-plane>
+    </a-marker>
+
+    <!-- fallback camera entity -->
+    <a-entity camera></a-entity>
+  </a-scene>
+</body>
+</html>
