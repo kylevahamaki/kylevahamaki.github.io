@@ -1,109 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
-    />
-    <title>AR Marker Text Viewer</title>
-    <meta
-      name="description"
-      content="Minimal AR.js scene that shows two text labels anchored to a printed marker."
-    />
-    <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.2/aframe/build/aframe-ar.js"></script>
-    <style>
-      :root {
-        color-scheme: dark;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        background: #000;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          sans-serif;
-        min-height: 100vh;
-        overflow: hidden;
-      }
-            a-scene {
-        width: 100vw;
-        height: 100vh;
-      }
-            .help {
-        position: fixed;
-        top: 0.75rem;
-        left: 0.75rem;
-        padding: 0.35rem 0.6rem;
-        background: rgba(0, 0, 0, 0.55);
-        color: #f4f4f4;
-        border-radius: 0.4rem;
-        font-size: 0.85rem;
-        line-height: 1.4;
-        max-width: min(280px, 60vw);
-        z-index: 2;
-      }
-            .help a {
-        color: #9bd4ff;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="help">
-      Point your camera at the <a href="assets/marker.png" download>printed marker</a>.
-      Customise text with <code>?front=Hello&back=World</code>.
-    </div>
-        <a-scene
-      vr-mode-ui="enabled: false"
-      embedded
-      renderer="alpha: true; logarithmicDepthBuffer: true; colorManagement: true"
-      arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false"
-    >
-      <a-marker type="pattern" url="assets/marker.patt">
-        <a-entity position="0 0 0" rotation="-90 0 0">
-          <a-plane
-            width="0.6"
-            height="0.35"
-            color="#101525"
-            material="opacity: 0.9"
-            position="0 0 0"
-          ></a-plane>
-                    <a-text
-            id="text-front"
-            value="Front label"
-            color="#f7f8ff"
-            align="center"
-            width="1.8"
-            position="0 0 0.02"
-          ></a-text>
-                    <a-text
-            id="text-back"
-            value="Back label"
-            color="#f7f8ff"
-            align="center"
-            width="1.8"
-            position="0 0 -0.02"
-            rotation="0 180 0"
-          ></a-text>
-        </a-entity>
-      </a-marker>
-            <a-entity camera></a-entity>
-    </a-scene>
+<head>
+  <meta charset="UTF-8">
+  <title>AR.js Fixed Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <script>
-      const params = new URLSearchParams(window.location.search);
-      const frontText = params.get("front");
-      const backText = params.get("back");
+  <!-- A-Frame Core -->
+  <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
 
-      if (frontText) {
-        document.getElementById("text-front").setAttribute("value", frontText);
-      }
+  <!-- AR.js for A-Frame -->
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
 
-      if (backText) {
-        document.getElementById("text-back").setAttribute("value", backText);
-      }
-    </script>
-  </body>
+  <style>
+    html, body {
+      margin: 0;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+    a-scene {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Scene -->
+  <a-scene
+    embedded
+    vr-mode-ui="enabled: false"
+    renderer="antialias: true; alpha: true; precision: mediump;"
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+  >
+    <!-- Marker for testing -->
+    <a-marker preset="hiro">
+      <a-box position="0 0.5 0" rotation="0 45 0" color="#4CC3D9"></a-box>
+      <a-text value="Hello AR!" position="0 1 0" align="center"></a-text>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <!-- Debug/Logging Handler -->
+  <script>
+    window.addEventListener('arError', function (event) {
+      console.error('AR.js error detected:', event.detail);
+      alert('AR.js encountered an error. Check console for details.');
+    });
+  </script>
+</body>
 </html>
